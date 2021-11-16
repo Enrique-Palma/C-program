@@ -23,13 +23,12 @@ struct Instruction
 {
 	int opCode; //to store opcode
 	int deviceOrAddress; //address of the operation
-
 };
 
 //Global variable
-int codeSize = 13;
+int codeSize = 100;
 //Tiny Machine Architecture variables
-int pc = 10; // for program counter
+int pc = 0; // for program counter
 int ir = 0; //for instruction register
 int mar = 0; //to store address of memory
 int dataMemory[9] = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
@@ -80,45 +79,29 @@ void tinyMachineSimulator(int opCode, int b)
     if(opCode == LOAD)
     {
         printf(" /* Loading from address [%d]... */ ", b);
-
 		ir = b;
-
 		mar = ir;
-
 		mdr = dataMemory[mar];
-
 		ac = mdr;
 
 		//Print value in tinny macine varibles
-
 		printVaribles();
-
 		pc += 1;
-
 		printf("/* PC <- PC + 1 */ ");
-
 		printf("\n/* PC <- PC + 1 */ ");
-
 		printf("\n/* MAR <- IR.ADDR */ ");
-
 		printf("\n/* MDR <- MEM[MAR] */ ");
-
 		printf("\n/* A <- MDR */ ");
     }
     else if(opCode == ADD)
     {
         printf(" /*Adding accumulator and value obtain from address [%d]*/ ", b);
-
 		ir = b;
-
 		mar = ir;
-
 		mdr = dataMemory[mar];
-
 		ac += mdr;
 
 		//Print value in tinny macine varibles
-
 		printVaribles();
 
 		pc += 1;
@@ -126,106 +109,74 @@ void tinyMachineSimulator(int opCode, int b)
     else if(opCode == STORE)
     {
         printf(" /* storing accumulator to memory location 0 */ ");
-
 		mdr = ac;
-
 		ir = b;
-
 		mar = ir;
-
 		dataMemory[mar] = mdr;
-
 		//Print value in tinny macine varibles
-
 		printVaribles();
-
 		pc += 1;
     }
     else if(opCode == SUB)
     {
         printf(" /* Subtracting memory address value [%d] from accumulator*/ ", b);
-
 		ir = b;
-
 		mar = ir;
-
 		mdr = dataMemory[mar];
-
 		ac -= mdr;
-
 		//Print value in tinny macine varibles
-
 		printVaribles();
-
 		pc += 1;
     }
     else if(opCode == IN)
     {
         printf(" /*Please input value:*/ ");
-
 		scanf("%d", &ac);
-
 		//Print value in tinny macine varibles
-
 		printVaribles();
-
 		pc += 1;
     }
     else if(opCode == OUT)
     {
         printf(" /*Accumulator current value = %d */ ", ac);
-
-		//Print value in tinny macine varibles
-
+		//Print value in tinny machine varibles
 		printVaribles();
-
 		pc += 1;
     }
     else if (opCode == END)
     {
         printf(" Program complete ");
-
 		exit(1);	
     }
     else if(opCode == JMP)
     {
         // *Jump to address
-
 		printf(" /*Setting program counter to %d*/ ", b);
-
 		pc = b;
-
 		//Print value in tinny macine varibles
-
 		printVaribles();
     } 
     else if(opCode == SKIPZ)
     {
         //Check if accumulator is 0,
-
 		printf(" /*Skipping the next instruction*/ ");
-
 		if (ac == 0) //if it is skip next instruction
-
-			pc += 2; //increament PC by 2
-
+        {
+            pc += 2; //increament PC by 2
+        }
 		else //otherwise
-
-			pc += 1; //increament PC by 1
+        {
+            pc += 1; //increament PC by 1
+        }			
 
 		//Print value in tinny macine varibles
-
 		printVaribles();
     } 
     else
     {
         printf(" /*There was an error parsing that opcode! Exiting program*/ ");
-
 		exit(0);
     }
-
-    
-
 	
 }
 
@@ -278,7 +229,7 @@ int main(int argc, char* argv[])
 	printVaribles();
 
 	//Get the instruction from programMemory
-	for(i = (pc / 10) - 1; i < sizeof(programMemory); i += 1)
+	for(i = pc / 10 ; i < sizeof(programMemory); i += 1)
 	{
 		//call function and passing programMemory value into our parser function
 		tinyMachineSimulator(programMemory[i].opCode, programMemory[i].deviceOrAddress);
