@@ -229,7 +229,7 @@ int main(int argc, char* argv[])
 	printVaribles();
 
 	//Get the instruction from programMemory
-	for(i = pc / 10 ; i < sizeof(programMemory); i += 1)
+	for(i = pc / 10; i < sizeof(programMemory); i += 1)
 	{
 		//call function and passing programMemory value into our parser function
 		tinyMachineSimulator(programMemory[i].opCode, programMemory[i].deviceOrAddress);
