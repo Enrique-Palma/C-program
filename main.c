@@ -3,18 +3,6 @@
 #include <string.h>
 #include <ctype.h>
 
-enum State
-{
-    LOAD = 1,
-    ADD = 2,
-    STORE = 3,
-    SUB = 4,
-    IN = 5,
-    OUT = 6,
-    END = 7,
-    JMP = 8,
-    SKIPZ = 9
-};
 //Instruction struct
 struct Instruction
 {
@@ -24,22 +12,24 @@ struct Instruction
 
 //Tiny Machine Architecture variables
 int pc = 0;  // for program counter
-int ir = 0;  //for instruction register
 int mar = 0; //to store address of memory
-int dataMemory[9] = {0, 0, 0, 0, 0, 0, 0, 0, 0};
 int mdr = 0; //to store data of memory
 int ac = 0;  //accumulator
 
 int comparingStrings(const char *a, const char *b);
 //function for print the tinny architecuter varibles
-void printVaribles();
+void printVaribles(int dataMemory[]);
 //Function used to count the amount of lines in text asmCodefile
 int getNumberOfLineInFile(FILE *asmCodefile);
 //Function used to parse instruction into machine code
-void tinyMachineSimulator(int opCode, int b);
+void tinyMachineSimulator(int opCode, int b, int dataMemory[], int ir);
 
 int main(int argc, char *argv[])
-{
+{  
+    //Tiny Machine Architecture variables 
+    int ir = 0;  //for instruction register
+    int dataMemory[9] = {0, 0, 0, 0, 0, 0, 0, 0, 0}; 
+
     int codeSize = 0;
     //This is where we get the number of lines in the code
     codeSize = getNumberOfLineInFile(fopen(argv[1], "r"));
@@ -85,13 +75,13 @@ int main(int argc, char *argv[])
     printf("Program assembled Run. ");
 
     //Print intial value in tinny macine varibles
-    printVaribles();
+    printVaribles(dataMemory);
 
     //Get the instruction from programMemory
     for (i = pc / 10; i < sizeof(programMemory); i += 1)
     {
         //call function and passing programMemory value into our parser function
-        tinyMachineSimulator(programMemory[i].opCode, programMemory[i].deviceOrAddress);
+        tinyMachineSimulator(programMemory[i].opCode, programMemory[i].deviceOrAddress, dataMemory, ir);
     }
 
     printf(" Program concluded... ");
@@ -106,7 +96,7 @@ int comparingStrings(const char *a, const char *b)
     return (int)(unsigned char)(*a) - (int)(unsigned char)(*b);
 }
 //function for print the tinny architecuter varibles
-void printVaribles()
+void printVaribles(int dataMemory[])
 {
     int i;
     printf("\n PC: %d | A: %d | MEM: [", pc, ac);
@@ -139,8 +129,18 @@ int getNumberOfLineInFile(FILE *asmCodefile)
 }
 
 //Function used to parse instruction into machine code
-void tinyMachineSimulator(int opCode, int b)
+void tinyMachineSimulator(int opCode, int b, int dataMemory[], int ir)
 {
+    int LOAD = 1;
+    int ADD = 2;
+    int STORE = 3;
+    int SUB = 4;
+    int IN = 5;
+    int OUT = 6;
+    int END = 7;
+    int JMP = 8;
+    int SKIPZ = 9;
+    
     if (opCode == LOAD)
     {
         printf(" /* Loading from address [%d]... */ ", b);
@@ -150,7 +150,7 @@ void tinyMachineSimulator(int opCode, int b)
         ac = mdr;
 
         //Print value in tinny macine varibles
-        printVaribles();
+        printVaribles(dataMemory);
         pc += 1;
         printf("/* PC <- PC + 1 */ ");
         printf("\n/* PC <- PC + 1 */ ");
@@ -167,7 +167,7 @@ void tinyMachineSimulator(int opCode, int b)
         ac += mdr;
 
         //Print value in tinny macine varibles
-        printVaribles();
+        printVaribles(dataMemory);
 
         pc += 1;
     }
@@ -179,7 +179,7 @@ void tinyMachineSimulator(int opCode, int b)
         mar = ir;
         dataMemory[mar] = mdr;
         //Print value in tinny macine varibles
-        printVaribles();
+        printVaribles(dataMemory);
         pc += 1;
     }
     else if (opCode == SUB)
@@ -190,7 +190,7 @@ void tinyMachineSimulator(int opCode, int b)
         mdr = dataMemory[mar];
         ac -= mdr;
         //Print value in tinny macine varibles
-        printVaribles();
+        printVaribles(dataMemory);
         pc += 1;
     }
     else if (opCode == IN)
@@ -198,14 +198,14 @@ void tinyMachineSimulator(int opCode, int b)
         printf(" /*Please input value:*/ ");
         scanf("%d", &ac);
         //Print value in tinny macine varibles
-        printVaribles();
+        printVaribles(dataMemory);
         pc += 1;
     }
     else if (opCode == OUT)
     {
         printf(" /*Accumulator current value = %d */ ", ac);
         //Print value in tinny machine varibles
-        printVaribles();
+        printVaribles(dataMemory);
         pc += 1;
     }
     else if (opCode == END)
@@ -219,7 +219,7 @@ void tinyMachineSimulator(int opCode, int b)
         printf(" /*Setting program counter to %d*/ ", b);
         pc = b;
         //Print value in tinny macine varibles
-        printVaribles();
+        printVaribles(dataMemory);
     }
     else if (opCode == SKIPZ)
     {
@@ -235,7 +235,7 @@ void tinyMachineSimulator(int opCode, int b)
         }
 
         //Print value in tinny macine varibles
-        printVaribles();
+        printVaribles(dataMemory);
     }
     else
     {
