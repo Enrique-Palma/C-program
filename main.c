@@ -11,22 +11,21 @@ struct Instruction
 };
 
 //Tiny Machine Architecture variables
-int pc = 0;  // for program counter
+
 int mar = 0; //to store address of memory
 int mdr = 0; //to store data of memory
 int ac = 0;  //accumulator
 
 int comparingStrings(const char *a, const char *b);
-//function for print the tinny architecuter varibles
-void printVaribles(int dataMemory[]);
 //Function used to count the amount of lines in text asmCodefile
 int getNumberOfLineInFile(FILE *asmCodefile);
 //Function used to parse instruction into machine code
-void tinyMachineSimulator(int opCode, int b, int dataMemory[], int ir);
+void tinyMachineSimulator(int opCode, int b, int dataMemory[], int ir, int pc);
 
 int main(int argc, char *argv[])
 {  
     //Tiny Machine Architecture variables 
+    int pc = 0;  // for program counter
     int ir = 0;  //for instruction register
     int dataMemory[9] = {0, 0, 0, 0, 0, 0, 0, 0, 0}; 
 
@@ -65,28 +64,33 @@ int main(int argc, char *argv[])
         }
     }
 
-    //Need to close the asmCodefile
+    //close file
     fclose(asmCodefile);
 
     //Display output
-
     printf(" Tiny Machine Simulator ");
     printf("Assembling program... ");
     printf("Program assembled Run. ");
 
-    //Print intial value in tinny macine varibles
-    printVaribles(dataMemory);
+    //Print intial value in tinny machine varibles    
+    ///////////////////////
+    printf("\n PC: %d | A: %d | MEM: [", pc, ac);
+    //print data in memory
+    for (i = 0; i < 9; i += 1)
+    {
+        printf("%d,", dataMemory[i]);        
+    }
+    printf("] \n");
+    /////////////////
 
     //Get the instruction from programMemory
     for (i = pc / 10; i < sizeof(programMemory); i += 1)
     {
         //call function and passing programMemory value into our parser function
-        tinyMachineSimulator(programMemory[i].opCode, programMemory[i].deviceOrAddress, dataMemory, ir);
+        tinyMachineSimulator(programMemory[i].opCode, programMemory[i].deviceOrAddress, dataMemory, ir, pc);
+        pc += 1;
     }
-
     printf(" Program concluded... ");
-    //system("pause");
-
     return 0;
 }
 //function to compare strings
@@ -94,19 +98,6 @@ int comparingStrings(const char *a, const char *b)
 {
     while (*a && *a == *b) { ++a; ++b; }
     return (int)(unsigned char)(*a) - (int)(unsigned char)(*b);
-}
-//function for print the tinny architecuter varibles
-void printVaribles(int dataMemory[])
-{
-    int i;
-    printf("\n PC: %d | A: %d | MEM: [", pc, ac);
-    //print data in memory
-
-    for (i = 0; i < 9; i += 1)
-    {
-        printf("%d,", dataMemory[i]);
-    }
-    printf("] \n");
 }
 
 //Function used to count the amount of lines in text asmCodefile
@@ -129,7 +120,7 @@ int getNumberOfLineInFile(FILE *asmCodefile)
 }
 
 //Function used to parse instruction into machine code
-void tinyMachineSimulator(int opCode, int b, int dataMemory[], int ir)
+void tinyMachineSimulator(int opCode, int b, int dataMemory[], int ir, int pc)
 {
     int LOAD = 1;
     int ADD = 2;
@@ -141,6 +132,8 @@ void tinyMachineSimulator(int opCode, int b, int dataMemory[], int ir)
     int JMP = 8;
     int SKIPZ = 9;
     
+    int i = 0;
+
     if (opCode == LOAD)
     {
         printf(" /* Loading from address [%d]... */ ", b);
@@ -148,10 +141,17 @@ void tinyMachineSimulator(int opCode, int b, int dataMemory[], int ir)
         mar = ir;
         mdr = dataMemory[mar];
         ac = mdr;
-
         //Print value in tinny macine varibles
-        printVaribles(dataMemory);
-        pc += 1;
+        ///////////////////////
+        printf("\n PC: %d | A: %d | MEM: [", pc, ac);
+        //print data in memory
+        for (i = 0; i < 9; i += 1)
+        {
+            printf("%d,", dataMemory[i]);        
+        }
+        printf("] \n");
+        ///////////////// 
+        
         printf("/* PC <- PC + 1 */ ");
         printf("\n/* PC <- PC + 1 */ ");
         printf("\n/* MAR <- IR.ADDR */ ");
@@ -166,10 +166,16 @@ void tinyMachineSimulator(int opCode, int b, int dataMemory[], int ir)
         mdr = dataMemory[mar];
         ac += mdr;
 
-        //Print value in tinny macine varibles
-        printVaribles(dataMemory);
-
-        pc += 1;
+        //Print value in tinny macine varibles        
+        ///////////////////////
+        printf("\n PC: %d | A: %d | MEM: [", pc, ac);
+        //print data in memory
+        for (i = 0; i < 9; i += 1)
+        {
+            printf("%d,", dataMemory[i]);        
+        }
+        printf("] \n");
+        /////////////////        
     }
     else if (opCode == STORE)
     {
@@ -178,9 +184,16 @@ void tinyMachineSimulator(int opCode, int b, int dataMemory[], int ir)
         ir = b;
         mar = ir;
         dataMemory[mar] = mdr;
-        //Print value in tinny macine varibles
-        printVaribles(dataMemory);
-        pc += 1;
+        //Print value in tinny macine varibles        
+        ///////////////////////
+        printf("\n PC: %d | A: %d | MEM: [", pc, ac);
+        //print data in memory
+        for (i = 0; i < 9; i += 1)
+        {
+            printf("%d,", dataMemory[i]);        
+        }
+        printf("] \n");
+        /////////////////        
     }
     else if (opCode == SUB)
     {
@@ -189,24 +202,47 @@ void tinyMachineSimulator(int opCode, int b, int dataMemory[], int ir)
         mar = ir;
         mdr = dataMemory[mar];
         ac -= mdr;
-        //Print value in tinny macine varibles
-        printVaribles(dataMemory);
-        pc += 1;
+        //Print value in tinny macine varibles      
+        ///////////////////////
+        printf("\n PC: %d | A: %d | MEM: [", pc, ac);
+        //print data in memory
+        for (i = 0; i < 9; i += 1)
+        {
+            printf("%d,", dataMemory[i]);        
+        }
+        printf("] \n");
+        /////////////////
+       
     }
     else if (opCode == IN)
     {
         printf(" /*Please input value:*/ ");
         scanf("%d", &ac);
         //Print value in tinny macine varibles
-        printVaribles(dataMemory);
-        pc += 1;
+       
+        ///////////////////////
+        printf("\n PC: %d | A: %d | MEM: [", pc, ac);
+        //print data in memory
+        for (i = 0; i < 9; i += 1)
+        {
+            printf("%d,", dataMemory[i]);        
+        }
+        printf("] \n");
+        /////////////////        
     }
     else if (opCode == OUT)
     {
         printf(" /*Accumulator current value = %d */ ", ac);
         //Print value in tinny machine varibles
-        printVaribles(dataMemory);
-        pc += 1;
+        ///////////////////////
+        printf("\n PC: %d | A: %d | MEM: [", pc, ac);
+        //print data in memory
+        for (i = 0; i < 9; i += 1)
+        {
+            printf("%d,", dataMemory[i]);        
+        }
+        printf("] \n");
+        /////////////////        
     }
     else if (opCode == END)
     {
@@ -218,8 +254,16 @@ void tinyMachineSimulator(int opCode, int b, int dataMemory[], int ir)
         // *Jump to address
         printf(" /*Setting program counter to %d*/ ", b);
         pc = b;
-        //Print value in tinny macine varibles
-        printVaribles(dataMemory);
+        //Print value in tinny macine varibles        
+        ///////////////////////
+        printf("\n PC: %d | A: %d | MEM: [", pc, ac);
+        //print data in memory
+        for (i = 0; i < 9; i += 1)
+        {
+            printf("%d,", dataMemory[i]);        
+        }
+        printf("] \n");
+        /////////////////
     }
     else if (opCode == SKIPZ)
     {
@@ -234,8 +278,16 @@ void tinyMachineSimulator(int opCode, int b, int dataMemory[], int ir)
             pc += 1; //increament PC by 1
         }
 
-        //Print value in tinny macine varibles
-        printVaribles(dataMemory);
+        //Print value in tinny macine varibles       
+        ///////////////////////
+        printf("\n PC: %d | A: %d | MEM: [", pc, ac);
+        //print data in memory
+        for (i = 0; i < 9; i += 1)
+        {
+            printf("%d,", dataMemory[i]);        
+        }
+        printf("] \n");
+        /////////////////
     }
     else
     {
