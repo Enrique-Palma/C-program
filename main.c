@@ -9,7 +9,7 @@ struct Instruction
     int deviceOrAddress; //address of the operation
 };
 
-int ac = 0; //accumulator global variable
+int ac = 0; //ac global variable
 
 int comparingStrings(const char *a, const char *b);
 //Function used to count the amount of lines in text asmCodefile
@@ -68,7 +68,7 @@ int main(int argc, char *argv[])
 
     //Print intial value in tinny machine varibles
     ///////////////////////
-    printf("\nPC = %d | A = %d | MEM = [", pc, ac);
+    printf("\nPC = %d | A = %d | DM = [", pc, ac);
     //print data in memory
     for (i = 0; i < 9; i += 1)
     {
@@ -81,10 +81,10 @@ int main(int argc, char *argv[])
     for (i = pc / 10; i < sizeof(programMemory); i += 1)
     {
         //call function and passing programMemory value into our parser function
-        simulator(programMemory[i].opCode, programMemory[i].deviceOrAddress, dataMemory, ir, pc);
+        simulator(programMemory[i].opCode, programMemory[i].deviceOrAddress, dataMemory, ir, pc); 
         pc += 1;
     }
-    printf(" Program concluded... ");
+    printf("Program concluded... ");
     return 0;
 }
 //function to compare strings
@@ -131,14 +131,14 @@ void simulator(int opCode, int b, int dataMemory[], int ir, int pc)
 
     if (opCode == LOAD)
     {
-        printf(" /* Loading from address [%d]... */ ", b);
+        printf("/* Loading from address [%d]... */ ", b);
         ir = b;
         mar = ir;
         mdr = dataMemory[mar];
         ac = mdr;
         //Print value in tinny macine varibles
         ///////////////////////
-        printf("\n PC: %d | A: %d | MEM: [", pc, ac);
+        printf("\nPC: %d | A: %d | DM: [", pc, ac);
         //print data in memory
         for (i = 0; i < 9; i += 1)
         {
@@ -147,15 +147,15 @@ void simulator(int opCode, int b, int dataMemory[], int ir, int pc)
         printf("] \n");
         /////////////////
 
-        printf("/* PC <- PC + 1 */ ");
         printf("\n/* PC <- PC + 1 */ ");
-        printf("\n/* MAR <- IR.ADDR */ ");
-        printf("\n/* MDR <- MEM[MAR] */ ");
-        printf("\n/* A <- MDR */ ");
+        printf(" -> /* PC <- PC + 1 */ ");
+        printf(" -> /* MAR <- IR.ADDR */ ");
+        printf(" -> /* MDR <- DM[MAR] */ ");
+        printf(" -> /* A <- MDR */ \n\n");
     }
     else if (opCode == ADD)
     {
-        printf(" /*Adding accumulator and value obtain from address [%d]*/ ", b);
+        printf("/*Adding accumulator and value obtain from address [%d]*/ ", b);
         ir = b;
         mar = ir;
         mdr = dataMemory[mar];
@@ -163,7 +163,7 @@ void simulator(int opCode, int b, int dataMemory[], int ir, int pc)
 
         //Print value in tinny macine varibles
         ///////////////////////
-        printf("\nPC = %d | A = %d | MEM = [", pc, ac);
+        printf("\nPC = %d | A = %d | DM = [", pc, ac);
         //print data in memory
         for (i = 0; i < 9; i += 1)
         {
@@ -174,14 +174,14 @@ void simulator(int opCode, int b, int dataMemory[], int ir, int pc)
     }
     else if (opCode == STORE)
     {
-        printf(" /* storing accumulator to memory location 0 */ ");
+        printf("/* storing accumulator to memory location 0 */ ");
         mdr = ac;
         ir = b;
         mar = ir;
         dataMemory[mar] = mdr;
         //Print value in tinny macine varibles
         ///////////////////////
-        printf("\nPC = %d | A = %d | MEM = [", pc, ac);
+        printf("\nPC = %d | A = %d | DM = [", pc, ac);
         //print data in memory
         for (i = 0; i < 9; i += 1)
         {
@@ -192,14 +192,14 @@ void simulator(int opCode, int b, int dataMemory[], int ir, int pc)
     }
     else if (opCode == SUB)
     {
-        printf(" /* Subtracting memory address value [%d] from accumulator*/ ", b);
+        printf("/* Subtracting memory address value [%d] from accumulator*/ ", b);
         ir = b;
         mar = ir;
         mdr = dataMemory[mar];
         ac -= mdr;
         //Print value in tinny macine varibles
         ///////////////////////
-        printf("\nPC = %d | A = %d | MEM = [", pc, ac);
+        printf("\nPC = %d | A = %d | DM = [", pc, ac);
         //print data in memory
         for (i = 0; i < 9; i += 1)
         {
@@ -210,12 +210,12 @@ void simulator(int opCode, int b, int dataMemory[], int ir, int pc)
     }
     else if (opCode == IN)
     {
-        printf(" /*Please input value:*/ ");
+        printf("/*Please input value:*/ ");
         scanf("%d", &ac);
         //Print value in tinny macine varibles
 
         ///////////////////////
-        printf("\nPC = %d | A = %d | MEM = [", pc, ac);
+        printf("PC = %d | A = %d | DM = [", pc, ac);
         //print data in memory
         for (i = 0; i < 9; i += 1)
         {
@@ -226,10 +226,10 @@ void simulator(int opCode, int b, int dataMemory[], int ir, int pc)
     }
     else if (opCode == OUT)
     {
-        printf(" /*Accumulator current value = %d */ ", ac);
+        printf("/*sending value %d from accumulator to printer*/ ", ac);
         //Print value in tinny machine varibles
         ///////////////////////
-        printf("\nPC = %d | A = %d | MEM = [", pc, ac);
+        printf("\nPC = %d | A = %d | DM = [", pc, ac);
         //print data in memory
         for (i = 0; i < 9; i += 1)
         {
@@ -246,11 +246,11 @@ void simulator(int opCode, int b, int dataMemory[], int ir, int pc)
     else if (opCode == JMP)
     {
         // *Jump to address
-        printf(" /*Setting program counter to %d*/ ", b);
+        printf("/*Setting counter to %d*/ ", b);
         pc = b;
         //Print value in tinny macine varibles
         ///////////////////////
-        printf("\nPC = %d | A = %d | MEM = [", pc, ac);
+        printf("\nPC = %d | A = %d | DM = [", pc, ac);
         //print data in memory
         for (i = 0; i < 9; i += 1)
         {
@@ -262,7 +262,7 @@ void simulator(int opCode, int b, int dataMemory[], int ir, int pc)
     else if (opCode == SKIPZ)
     {
         //Check if accumulator is 0,
-        printf(" /*Skipping the next instruction*/ ");
+        printf("/*Skipping the next instruction*/ ");
         if (ac == 0) //if it is skip next instruction
         {
             pc += 2; //increament PC by 2
@@ -274,7 +274,7 @@ void simulator(int opCode, int b, int dataMemory[], int ir, int pc)
 
         //Print value in tinny macine varibles
         ///////////////////////
-        printf("\nPC = %d | A = %d | MEM = [", pc, ac);
+        printf("\nPC = %d | A = %d | DM = [", pc, ac);
         //print data in memory
         for (i = 0; i < 9; i += 1)
         {
@@ -285,7 +285,7 @@ void simulator(int opCode, int b, int dataMemory[], int ir, int pc)
     }
     else
     {
-        printf(" /*There was an error parsing that opcode! Exiting program*/ ");
+        printf("/*There was an error parsing that opcode! Exiting program*/ ");
         exit(0);
     }
 }
