@@ -68,7 +68,7 @@ int main(int argc, char *argv[])
     printf("Assembling program...\n");
     printf("Program Assembled\n\nRun.");
 
-    //Print intial value in tinny machine varibles
+    //Print intial value in PC and AC
     ///////////////////////
     printf("\nPC = %d | A = %d | DM = [", pc, ac);
     //print data in memory
@@ -86,7 +86,7 @@ int main(int argc, char *argv[])
         simulator(programMemory[i].opCode, programMemory[i].deviceOrAddress, dataMemory, ir, pc); 
         pc += 1;
     }
-    printf("Program concluded... ");
+    printf("Program has ended... ");
     return 0;
 }
 //function to compare strings
@@ -138,7 +138,7 @@ void simulator(int opCode, int b, int dataMemory[], int ir, int pc)
         mar = ir;
         mdr = dataMemory[mar];
         ac = mdr;
-        //Print value in tinny macine varibles
+        //Print pc and ac
         ///////////////////////
         printf("\nPC: %d | A: %d | DM: [", pc, ac);
         //print data in memory
@@ -148,22 +148,17 @@ void simulator(int opCode, int b, int dataMemory[], int ir, int pc)
         }
         printf("] \n");
         /////////////////
-
-        printf("\n/* PC <- PC + 1 */ ");
-        printf(" -> /* PC <- PC + 1 */ ");
-        printf(" -> /* MAR <- IR.ADDR */ ");
-        printf(" -> /* MDR <- DM[MAR] */ ");
-        printf(" -> /* A <- MDR */ \n\n");
+       
     }
     else if (opCode == ADD)
     {
-        printf("/*Adding accumulator and value obtain from address [%d]*/ ", b);
+        printf("/*Adding AC and value from mdr [%d]*/ ", b);
         ir = b;
         mar = ir;
         mdr = dataMemory[mar];
         ac += mdr;
 
-        //Print value in tinny macine varibles
+        //Print pc and ac
         ///////////////////////
         printf("\nPC = %d | A = %d | DM = [", pc, ac);
         //print data in memory
@@ -176,12 +171,12 @@ void simulator(int opCode, int b, int dataMemory[], int ir, int pc)
     }
     else if (opCode == STORE)
     {
-        printf("/* storing accumulator to memory location 0 */ ");
+        printf("/* storing AC to memory 0 */ ");
         mdr = ac;
         ir = b;
         mar = ir;
         dataMemory[mar] = mdr;
-        //Print value in tinny macine varibles
+        //Print pc and ac
         ///////////////////////
         printf("\nPC = %d | A = %d | DM = [", pc, ac);
         //print data in memory
@@ -194,12 +189,12 @@ void simulator(int opCode, int b, int dataMemory[], int ir, int pc)
     }
     else if (opCode == SUB)
     {
-        printf("/* Subtracting memory address value [%d] from accumulator*/ ", b);
+        printf("/*Subtracting mdr value [%d] from AC*/ ", b);
         ir = b;
         mar = ir;
         mdr = dataMemory[mar];
         ac -= mdr;
-        //Print value in tinny macine varibles
+        //Print pc and ac
         ///////////////////////
         printf("\nPC = %d | A = %d | DM = [", pc, ac);
         //print data in memory
@@ -212,10 +207,9 @@ void simulator(int opCode, int b, int dataMemory[], int ir, int pc)
     }
     else if (opCode == IN)
     {
-        printf("/*Please input value:*/ ");
+        printf("/*Input value from keyboard:*/ ");
         scanf("%d", &ac);
-        //Print value in tinny macine varibles
-
+        //Print pc and ac
         ///////////////////////
         printf("PC = %d | A = %d | DM = [", pc, ac);
         //print data in memory
@@ -229,7 +223,7 @@ void simulator(int opCode, int b, int dataMemory[], int ir, int pc)
     else if (opCode == OUT)
     {
         printf("/*sending value %d from accumulator to printer*/ ", ac);
-        //Print value in tinny machine varibles
+        //Print pc and ac
         ///////////////////////
         printf("\nPC = %d | A = %d | DM = [", pc, ac);
         //print data in memory
@@ -250,7 +244,7 @@ void simulator(int opCode, int b, int dataMemory[], int ir, int pc)
         // *Jump to address
         printf("/*Setting counter to %d*/ ", b);
         pc = b;
-        //Print value in tinny macine varibles
+        //Print pc and ac
         ///////////////////////
         printf("\nPC = %d | A = %d | DM = [", pc, ac);
         //print data in memory
@@ -274,7 +268,7 @@ void simulator(int opCode, int b, int dataMemory[], int ir, int pc)
             pc += 1; //increament PC by 1
         }
 
-        //Print value in tinny macine varibles
+        //Print pc and ac
         ///////////////////////
         printf("\nPC = %d | A = %d | DM = [", pc, ac);
         //print data in memory
